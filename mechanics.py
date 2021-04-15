@@ -3,31 +3,28 @@
 # description: The main mechanics of the game in its own file
 
 
-
 import dice
 from collections import Counter
 import scorecard
 
 # Amount of players
 
-my_scorecard = scorecard.Scorecard
-
 def player_amount():
     while True:
-        amount = input("How many players? (1-4):\n")
-        if amount == "1" or "2" or "3" or "4":
-            return int(amount)
+        amount = input("Solo or duo? \n(type player amount 1 or 2):\n")
+        if amount == "1" or "2":
+            try:
+                amount = int(amount)
+                return amount
+            except:
+                print("Error. Please input a correct player amount")
         else:
-            print("Error. Please input a number correct player amount")
-            continue
+            pass
 
-
-# Arrange scoreboard
 
 #### Rolling a single round and returning players picked dices in a list mechanics ###
 
 def roll_the_dices():
-
     my_dice = dice.Dice()
     rolled_dices = []
     locked_dices = []
@@ -52,17 +49,16 @@ def roll_the_dices():
             final_dices = single_list(locked_dices)
             return final_dices
 
-
         # Print shows the rolled dices in a list
         print(rolled_dices)
 
         # Function that converts the amount of list items into an integer
         amount = amount_of_dices(rolled_dices)
 
-        # Function that prints out the selection of dices to pick
+        # Function that prints out the selection arrows of dices to pick
         dices_to_pick(amount)
 
-        # Selects the locked dices and returns the index numbers of locked items
+        # Player selects the locked dices and function returns the index numbers of locked items
         picked = picked_dices(amount)
 
         # Makes a list out of the selected dices and shows them
@@ -71,7 +67,22 @@ def roll_the_dices():
 
         # Add the locked numbers to the list of "rolled_dices"
         locked_dices.append(locked)
-        print("\nAll locked dices during this turn: ", locked_dices)
+
+        # Combine multiple lists into a single list and show all locked dices during the turn
+        single_locked = single_list(locked_dices)
+        print("\nAll locked dices during this turn: ", single_locked)
+
+        # Convert locked dices list into integer
+        locked_int = amount_of_dices(locked)
+
+
+        # If player chooses to lock all five dices the round ends immediately
+        if locked_int == 5:
+            print("\nPlace score in to the scorecard -->")
+            final_dices = single_list(locked_dices)
+            print(final_dices)
+
+            return final_dices
 
         # Reduces the amount of rolls available to the player
         rolls -= 1
@@ -80,15 +91,29 @@ def roll_the_dices():
             break
 
 
-        # Convert locked dices list into integer
-        locked_int = amount_of_dices(locked)
-
         # Reduces the amount of dices to roll on the next round
         leftover_dices = len(rolled_dices) - locked_int
-        print("You have ", leftover_dices , " dices left for next round.\n")
+        print("You have ", leftover_dices, " dices left for next round.\n")
         ask_to_continue = input("Throw more (yes/no)")
+
         final_dices = single_list(locked_dices)
-        if len(final_dices) > 4:
+
+
+        # if player locks insufficient amount of dices and has rolls left
+        # the dices on board will be automatically picked and the turn ends
+        if ask_to_continue == "no" and locked_int < 5:
+            for item in rolled_dices:
+                for x in single_locked:
+                    if item == x:
+                        rolled_dices.remove(x)
+            print(rolled_dices)
+            locked_dices.append(rolled_dices)
+            final_dices = single_list(locked_dices)
+            return final_dices
+
+
+        # If player has alraeady locked 5 dices the turn ends
+        elif len(final_dices) > 4:
             return final_dices
 
         elif ask_to_continue == "yes":
@@ -96,21 +121,17 @@ def roll_the_dices():
             rolled_dices = []
             pass
         elif ask_to_continue == "no":
-            if not locked:
+            if not locked and lap == 3:
                 forced = forced_lock(rolled_dices)
                 locked = locked_pick(rolled_dices, forced, lap)
                 locked_dices.append(locked)
                 final_dices = single_list(locked_dices)
                 return final_dices
 
+
     final_dices = single_list(locked_dices)
 
-
-    #print(rolled_dices)
-
-
-
-
+    # print(rolled_dices)
 
     print("\nOut of rolls. Place score in to the scorecard -->")
     print("Dices left to throw: ")
@@ -118,24 +139,26 @@ def roll_the_dices():
 
     return final_dices
 
+## Mechanics used in the one turn of rolling ##
+
 # Converting the amount of list items into an integer
 def amount_of_dices(x):
     amount = len(x)
     return amount
+
 
 # A loop that prints out the amount of arrows pointing at the rolled dices
 def dices_to_pick(x):
     for item in range(x):
         print(" ▲", end=" ")
 
-
     print("\n")
     y = 1
     for item in range(x):
-
         print("", y, end=" ")
         x -= 1
         y += 1
+
 
 def picked_dices(roll):
     locked_dices = []
@@ -145,18 +168,18 @@ def picked_dices(roll):
           "\nPress 0 to stop locking dices.\n")
 
     while throws > 0:
-            pick = int(input("Pick a dice: "))
-            if pick == 0:
-                break
+        pick = int(input("Pick a dice: "))
+        if pick == 0:
+            break
 
-            elif pick > roll or pick < 0:
-                print("That dice doesn't exist. Pick a index number between 1 -", roll )
-                continue
+        elif pick > roll or pick < 0:
+            print("That dice doesn't exist. Pick a index number between 1 -", roll)
+            continue
 
-            else:
-                throws -= 1
-                pick -= 1
-                locked_dices.append(pick)
+        else:
+            throws -= 1
+            pick -= 1
+            locked_dices.append(pick)
 
     return locked_dices
 
@@ -171,6 +194,7 @@ def locked_pick(rolled_dices, picked_dices, lap):
     print(locked)
     return locked
 
+
 # Converting players picks from multiple lists to a singular list
 def single_list(locked_list):
     # make three lists into one single list
@@ -179,6 +203,7 @@ def single_list(locked_list):
         for item in turn_locked:
             single_list.append(item)
     return single_list
+
 
 def forced_lock(rolled_dices):
     print("Out of rolls")
@@ -196,8 +221,6 @@ def forced_lock(rolled_dices):
 #### Implementing the players picked dices into the scorecard mechanics ###
 
 def set_score(picked, which_score, score_or_dash):
-
-
     total = 0
     list_lenght = len(picked)
 
@@ -350,7 +373,7 @@ def set_score(picked, which_score, score_or_dash):
                     three_of_a_kind.append(my_list[3])
                     three_of_a_kind.append(my_list[2])
                     three_of_a_kind_value = sum(three_of_a_kind)
-                    return  three_of_a_kind_value
+                    return three_of_a_kind_value
 
                 else:
                     print("There are no three of a kind. Select another score or rule out a result.")
@@ -437,6 +460,7 @@ def set_score(picked, which_score, score_or_dash):
                         return None
 
                     x = pair_value + three_of_a_kind_value
+                    print(x)
                     return x
 
 
