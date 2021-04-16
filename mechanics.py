@@ -7,6 +7,7 @@ import dice
 from collections import Counter
 import scorecard
 
+
 # Amount of players
 
 def player_amount():
@@ -65,22 +66,20 @@ def roll_the_dices():
         locked = locked_pick(rolled_dices, picked, lap)
         lap += 1
 
-        # Add the locked numbers to the list of "rolled_dices"
+        # Add the locked dices to the list of "locked_dices"
         locked_dices.append(locked)
 
         # Combine multiple lists into a single list and show all locked dices during the turn
         single_locked = single_list(locked_dices)
         print("\nAll locked dices during this turn: ", single_locked)
 
-        # Convert locked dices list into integer
+        # Convert locked dices list item amount into integer
         locked_int = amount_of_dices(locked)
-
 
         # If player chooses to lock all five dices the round ends immediately
         if locked_int == 5:
             print("\nPlace score in to the scorecard -->")
             final_dices = single_list(locked_dices)
-            print(final_dices)
 
             return final_dices
 
@@ -90,18 +89,20 @@ def roll_the_dices():
         if rolls < 1:
             break
 
-
         # Reduces the amount of dices to roll on the next round
         leftover_dices = len(rolled_dices) - locked_int
         print("You have ", leftover_dices, " dices left for next round.\n")
-        ask_to_continue = input("Throw more (yes/no)")
 
+        # Asks if  player wants to keep rolling
+        ask_to_continue = continue_or_no()
+
+        # Turns all locked dices into a single list
         final_dices = single_list(locked_dices)
-
 
         # if player locks insufficient amount of dices and has rolls left
         # the dices on board will be automatically picked and the turn ends
-        if ask_to_continue == "no" and locked_int < 5:
+        lenght = len(final_dices)
+        if ask_to_continue == "no" and lenght < 5:
             for item in rolled_dices:
                 for x in single_locked:
                     if item == x:
@@ -112,14 +113,27 @@ def roll_the_dices():
             return final_dices
 
 
-        # If player has alraeady locked 5 dices the turn ends
+        # If player has already locked 5 dices the turn ends
         elif len(final_dices) > 4:
             return final_dices
 
         elif ask_to_continue == "yes":
+            # Asks if player wants to reset locked dices before next roll
+            reset = reset_or_no()
+            if reset == "yes":
+                final_dices = reset_dices(final_dices, locked_int)
+                locked_dices.append(final_dices)
+                all_locked = single_list(locked_dices)
+                leftover_dices = 5 - len(all_locked)
+            else:
+                pass
+
+            # Subtracts amount of locked dices from the amount of dices to roll on next round
             dices_to_roll = leftover_dices
+            # Resets rolled dices list ready for next roll
             rolled_dices = []
-            pass
+            print("\nRoll number ", lap, " starts. \nrolling...")
+            continue
         elif ask_to_continue == "no":
             if not locked and lap == 3:
                 forced = forced_lock(rolled_dices)
@@ -127,7 +141,6 @@ def roll_the_dices():
                 locked_dices.append(locked)
                 final_dices = single_list(locked_dices)
                 return final_dices
-
 
     final_dices = single_list(locked_dices)
 
@@ -139,8 +152,35 @@ def roll_the_dices():
 
     return final_dices
 
+
 ## Mechanics used in the one turn of rolling ##
 
+# Resetting locked dices takes the locked list and its lenght as parameter
+def reset_dices(locked, locked_int):
+    print("These are your locked dices:", locked)
+    while locked_int > 0:
+        to_remove = reset_as_int()
+        for item in locked:
+            if to_remove == 0:
+                return locked
+            elif item == to_remove:
+                locked.remove(item)
+                print("Locked dices after removal:", locked)
+                break
+            else:
+                continue
+
+def reset_as_int():
+    while True:
+        answer = input("Please enter a dice to remove (1-6):\n(Exit by pressing 0)  ")
+        if answer == "1" or "2" or "3" or "4" or "5" or "6":
+            try:
+                answer = int(answer)
+                return answer
+            except:
+                print("Incorrect value. Try again!")
+        else:
+            pass
 # Converting the amount of list items into an integer
 def amount_of_dices(x):
     amount = len(x)
@@ -168,8 +208,13 @@ def picked_dices(roll):
           "\nPress 0 to stop locking dices.\n")
 
     while throws > 0:
-        pick = int(input("Pick a dice: "))
+        pick = input("Pick a dice: ")
+        try:
+            pick = int(pick)
+        except:
+            continue
         if pick == 0:
+            #print("Please choose a number between 1 and ", throws)
             break
 
         elif pick > roll or pick < 0:
@@ -179,7 +224,10 @@ def picked_dices(roll):
         else:
             throws -= 1
             pick -= 1
-            locked_dices.append(pick)
+            if pick not in locked_dices:
+                locked_dices.append(pick)
+            else:
+                print("You already selected that dice. Try again!")
 
     return locked_dices
 
@@ -205,8 +253,8 @@ def single_list(locked_list):
     return single_list
 
 
+# Force append to locked list of leftover dices
 def forced_lock(rolled_dices):
-    print("Out of rolls")
     last_lock = []
     amount = len(rolled_dices)
     pick = 1
@@ -218,11 +266,142 @@ def forced_lock(rolled_dices):
     return last_lock
 
 
+# Ensure that the answer is exactly 'yes' or 'no'
+def continue_or_no():
+    while True:
+        ask_to_continue = input("Throw more? (yes/no)")
+        if ask_to_continue == "yes":
+            return ask_to_continue
+        elif ask_to_continue == "no":
+            return ask_to_continue
+        else:
+            print("You must choose 'yes' or 'no'.")
+            continue
+
+
+# Ensure that the answer is exactly 'score' or 'dash'
+def score_or_dash():
+    while True:
+        answer = input("\nType 'score' or dash over one result from card"
+                       "by typing 'dash' ")
+        if answer == "score":
+            return answer
+        elif answer == "dash":
+            return answer
+        else:
+            print("You must choose 'score' or 'dash'.")
+            continue
+
+
+# Ensure that the answer is exactly one of the slots in scoreboard and is not already used in order to continue
+def which_score(used):
+    while True:
+        which = input("Select result to lock or dash (ex. 'ones')")
+        if which == "ones":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "twos":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "threes":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "fours":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "fives":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "sixes":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "pair":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "two pair":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "three of a kind":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "four of a kind":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "small straight":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "large straight":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "full house":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "chance":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "yatzy":
+            if which in used:
+                print("Used value. Pick another one or change score to dash by typing 'dash'")
+                continue
+            return which
+        elif which == "dash":
+            print("You changed score to dash.")
+            return which
+        else:
+            print("Incorrect or already used value. Please enter a valid score in lower case. For example 'ones'"
+                  "\nIf you can not assign your score anywhere you can change to dashing by typing 'dash'")
+            continue
+
+def reset_or_no():
+    while True:
+        answer = input("\nReset locked dices before next roll? (yes/no)")
+        if answer == "yes":
+            return answer
+        elif answer == "no":
+            return answer
+        else:
+            print("You must choose 'yes' or 'no'.")
+            continue
+
+
+
+
+
+
+
 #### Implementing the players picked dices into the scorecard mechanics ###
 
-def set_score(picked, which_score, score_or_dash):
+def set_score(picked, which, score_or_dash):
     total = 0
-    list_lenght = len(picked)
+    list_length = len(picked)
 
     # The function parameter 'picked' is referred as my_list since a separate object is needed for list manipulation
 
@@ -230,37 +409,33 @@ def set_score(picked, which_score, score_or_dash):
     for item in picked:
         my_list.append(item)
 
-    while list_lenght > 0:
+    while list_length > 0:
         if score_or_dash == "score":
-            if which_score == "ones":
+            if which == "ones":
                 amount = my_list.count(1) * 1
                 return amount
 
-            elif which_score == "twos":
+            elif which == "twos":
                 amount = my_list.count(2) * 2
                 return amount
 
-
-            elif which_score == "threes":
+            elif which == "threes":
                 amount = my_list.count(3) * 3
                 return amount
 
-            elif which_score == "fours":
+            elif which == "fours":
                 amount = my_list.count(4) * 4
                 return amount
 
-
-            elif which_score == "fives":
+            elif which == "fives":
                 amount = my_list.count(5) * 5
                 return amount
 
-
-            elif which_score == "sixes":
+            elif which == "sixes":
                 amount = my_list.count(6) * 6
                 return amount
 
-
-            elif which_score == "pair":
+            elif which == "pair":
                 # sort list in reverse so the highest values in the beginning
                 my_list.sort(reverse=True)
                 pair = 0
@@ -279,10 +454,10 @@ def set_score(picked, which_score, score_or_dash):
                         pair = my_list[3] + my_list[4]
                         return pair
                     else:
-                        print("There are no pairs. Select another score or rule out a result.")
-                        return None
+                        print("This is not pair. Pick again..")
+                        return 120000
 
-            elif which_score == "two pair":
+            elif which == "two pair":
                 pair_1_value = 0
                 pair_2_value = 0
                 pair_1 = []
@@ -327,8 +502,8 @@ def set_score(picked, which_score, score_or_dash):
                         pair_1_value = sum(pair_1)
                         to_continue = False
                     else:
-                        print("There are no two pairs. Select another score or rule out a result.")
-                        return None
+                        print("This is not two pairs. Pick again..")
+                        return 120000
 
                 # iterate the rest on my_list containing 3 elements
                 to_continue = True
@@ -348,14 +523,13 @@ def set_score(picked, which_score, score_or_dash):
                         pair_2_value = sum(pair_2)
                         to_continue = False
                     else:
-                        print("There are no two pairs. Select another score or rule out a result.")
-                        return None
+                        print("This is not two pairs. Pick again.")
+                        return 120000
 
                 x = pair_1_value + pair_2_value
                 return x
 
-
-            elif which_score == "three of a kind":
+            elif which == "three of a kind":
                 three_of_a_kind = []
                 # sort list
                 my_list.sort()
@@ -377,10 +551,9 @@ def set_score(picked, which_score, score_or_dash):
 
                 else:
                     print("There are no three of a kind. Select another score or rule out a result.")
-                    return None
+                    return 120000
 
-
-            elif which_score == "four of a kind":
+            elif which == "four of a kind":
                 four_of_a_kind = []
                 # sort list
                 my_list.sort()
@@ -403,22 +576,26 @@ def set_score(picked, which_score, score_or_dash):
                     return four_of_a_kind_value
 
                 else:
-                    print("There are no four of a kind. Select another score or rule out a result.")
-                    return None
+                    print("This is not four of a kind. Pick again...")
+                    return 120000
 
-
-            elif which_score == "small straight":
+            elif which == "small straight":
                 sum_of_ss = 15
                 if 1 and 2 and 3 and 4 and 5 in my_list:
                     return sum_of_ss
+                else:
+                    print("This is not small straight. Pick again..")
+                    return 120000
 
-
-            elif which_score == "large straight":
+            elif which == "large straight":
                 sum_of_ls = 20
                 if 6 and 2 and 3 and 4 and 5 in my_list:
                     return sum_of_ls
+                else:
+                    print("This is not large straight. Pick again..")
+                    return 120000
 
-            elif which_score == "full house":
+            elif which == "full house":
                 pair_value = 0
                 three_of_a_kind_value = 0
                 pair = []
@@ -426,17 +603,43 @@ def set_score(picked, which_score, score_or_dash):
                 to_continue = True
                 # sort list
                 my_list.sort()
-
-                # iterate two elements from the start and end of the sorted list to find the pair first
-                # remove them from sorted list and move on to search for the remaining 3 of a kind
+                # iterate two elements from the start and end of the sorted list to find the 3 of a kind first
+                # remove them from sorted list and move on to search for the remaining pair
                 while to_continue:
+                    if my_list[0] == my_list[1] == my_list[2]:
+                        three_of_a_kind.append(my_list[0])
+                        three_of_a_kind.append(my_list[1])
+                        three_of_a_kind.append(my_list[2])
+
+                        my_list.remove(my_list[0])
+                        my_list.remove(my_list[0])
+                        my_list.remove(my_list[0])
+
+                        three_of_a_kind_value = sum(three_of_a_kind)
+
+                    elif my_list[4] == my_list[3] == my_list[2]:
+                        three_of_a_kind.append(my_list[4])
+                        three_of_a_kind.append(my_list[3])
+                        three_of_a_kind.append(my_list[2])
+
+                        my_list.remove(my_list[4])
+                        my_list.remove(my_list[3])
+                        my_list.remove(my_list[2])
+
+                        three_of_a_kind_value = sum(three_of_a_kind)
+                    else:
+                        print("This is not full house. Pick again..")
+                        return 120000
+
                     if my_list[0] == my_list[1]:
                         pair.append(my_list[0])
                         pair.append(my_list[1])
+
                         my_list.remove(my_list[0])
                         my_list.remove(my_list[0])
+
                         pair_value = sum(pair)
-                        to_continue = False
+
 
                     elif my_list[4] == my_list[3]:
                         pair.append(my_list[4])
@@ -444,38 +647,33 @@ def set_score(picked, which_score, score_or_dash):
                         my_list.remove(my_list[4])
                         my_list.remove(my_list[4])
                         pair_value = sum(pair)
-                        to_continue = False
+
+
 
                     else:
-                        print("There are no full house. Select another score or rule out a result.")
-                        return None
+                        print("This is not full house. Pick again..")
+                        return 120000
 
-                    if my_list[0] == my_list[1] == my_list[2]:
-                        three_of_a_kind.append(my_list[0])
-                        three_of_a_kind.append(my_list[1])
-                        three_of_a_kind.append(my_list[2])
-                        three_of_a_kind_value = sum(three_of_a_kind)
-                    else:
-                        print("There are no full house. Select another score or rule out a result.")
-                        return None
+
 
                     x = pair_value + three_of_a_kind_value
-                    print(x)
+
                     return x
 
-
-            elif which_score == "chance":
+            elif which == "chance":
                 for item in my_list:
                     total = sum(my_list)
 
                 return total
 
-            elif which_score == "yatzy":
+            elif which == "yatzy":
                 x = picked[0]
                 counter = Counter(picked)
                 total = 50
                 if counter == {x: 5}:
                     return total
+                else:
+                    print("This is not yatzy. Pick again..")
 
         else:
-            break
+            return 120000
