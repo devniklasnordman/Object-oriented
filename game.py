@@ -45,23 +45,26 @@ def main():
 
         score_or_dash = gm.score_or_dash()
         which_score = gm.which_score(p1_used_scores)
-        if which_score == "dash":
-            score_or_dash = "dash"
+
+        # Checks validity and returns sum of result
+        sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+        sum_to_scorecard_type = type(sum_to_scorecard)
+
+        # If user tries to enter a score that doesn't match the criteria the sum_to_scorecard keeps looping
+        # until there is a match or the player picks to dash a score
+        while sum_to_scorecard_type != int:
+            print("Your score did not match the criteria. Change to dash?")
+            score_or_dash = gm.score_or_dash()
             which_score = gm.which_score(p1_used_scores)
-        else:
-            pass
+            if score_or_dash == "dash":
+                break
+            sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+            sum_to_scorecard_type = type(sum_to_scorecard)
 
+        # After validating the result to scorecard put the selection into the used scores section
         p1_used_scores.append(which_score)
-
-        # Checks validity and returns sum of result in string format
-        while True:
-            sum_to_scorecard = str(gm.set_score(one_turn, which_score, score_or_dash))
-            if sum_to_scorecard == "120000":
-                score_or_dash = gm.score_or_dash()
-                which_score = gm.which_score(p1_used_scores)
-            else:
-                pass
-
+        # Convert integer into str so it can be placed in the scorecard
+        sum_to_scorecard = str(sum_to_scorecard)
 
         # Player 1 setting scorecard values, single digit scores have spaces on each side, but
         # double digit scores have a single space after it to maintain symmetry
@@ -220,8 +223,10 @@ def main():
                 total_into_str = str(updated_total)
                 if score_lenght == 1:
                     my_scorecard.set_sum(" " + total_into_str + " ")
+                elif score_lenght == 2:
+                    my_scorecard.set_sum(total_into_str + " ")
                 else:
-                    my_scorecard.set_sum("" + total_into_str + " ")
+                    my_scorecard.set_sum(total_into_str)
             else:
                 pass
         else:
@@ -287,6 +292,7 @@ def main():
         if player_amount > 1:
             print("\nPlayer 2's turn\nYour rolled: \n")
             one_turn = gm.roll_the_dices()
+            print(one_turn)
 
             print("You rolled", one_turn)
             print("Scorecard")
@@ -296,16 +302,26 @@ def main():
 
             score_or_dash = gm.score_or_dash()
             which_score = gm.which_score(p2_used_scores)
-            if which_score == "dash":
-                score_or_dash = "dash"
+
+            # Checks validity and returns sum of result
+            sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+            sum_to_scorecard_type = type(sum_to_scorecard)
+
+            # If user tries to enter a score that doesn't match the criteria the sum_to_scorecard keeps looping
+            # until there is a match or the player picks to dash a score
+            while sum_to_scorecard_type != int:
+                print("Your score did not match the criteria. Change to dash?")
+                score_or_dash = gm.score_or_dash()
                 which_score = gm.which_score(p2_used_scores)
-            else:
-                pass
+                if score_or_dash == "dash":
+                    break
+                sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+                sum_to_scorecard_type = type(sum_to_scorecard)
 
+            # After validating the result to scorecard put the selection into the used scores section
             p2_used_scores.append(which_score)
-
-            # Checks validity and returns sum of result in string format
-            sum_to_scorecard = str(gm.set_score(one_turn, which_score, score_or_dash))
+            # Convert integer into str so it can be placed in the scorecard
+            sum_to_scorecard = str(sum_to_scorecard)
 
             # Player 2 setting scorecard values, single digit scores have spaces on each side, but
             # double digit scores have a single space after it to maintain symmetry

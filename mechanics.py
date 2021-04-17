@@ -27,7 +27,6 @@ def player_amount():
 
 def roll_the_dices():
     my_dice = dice.Dice()
-    rolled_dices = []
     locked_dices = []
 
     dices_to_roll = 5
@@ -36,18 +35,22 @@ def roll_the_dices():
     lap = 1
 
     while rolls > 0 and to_continue:
+        rolled_dices = []
         # Loop that performs one round of rolling for a player
         while dices_to_roll > 0:
             my_dice.roll_dice()
             rolled_dices.append(my_dice.get_side())
             dices_to_roll -= 1
 
-        # Automated lock of dices on last turn
+        # Automated roll and lock of dices on last turn
         if lap == 3:
             forced = forced_lock(rolled_dices)
             locked = locked_pick(rolled_dices, forced, lap)
             locked_dices.append(locked)
-            final_dices = single_list(locked_dices)
+            final_dices = locked_dices
+            final_len = len(final_dices)
+            if final_len > 1:
+                final_dices = single_list(final_dices)
             return final_dices
 
         # Print shows the rolled dices in a list
@@ -66,12 +69,12 @@ def roll_the_dices():
         locked = locked_pick(rolled_dices, picked, lap)
         lap += 1
 
-        # Add the locked dices to the list of "locked_dices"
+        # Add the locked dices to the list of "locked_dices" and convert it into a single list
         locked_dices.append(locked)
 
-        # Combine multiple lists into a single list and show all locked dices during the turn
-        single_locked = single_list(locked_dices)
-        print("\nAll locked dices during this turn: ", single_locked)
+        # Show all locked dices during the turn in a single list format
+        single = single_list(locked_dices)
+        print("\nAll locked dices during this turn: ", single)
 
         # Convert locked dices list item amount into integer
         locked_int = amount_of_dices(locked)
@@ -96,35 +99,36 @@ def roll_the_dices():
         # Asks if  player wants to keep rolling
         ask_to_continue = continue_or_no()
 
-        # Turns all locked dices into a single list
-        final_dices = single_list(locked_dices)
-
         # if player locks insufficient amount of dices and has rolls left
         # the dices on board will be automatically picked and the turn ends
-        lenght = len(final_dices)
+        lenght = len(locked_dices)
         if ask_to_continue == "no" and lenght < 5:
-            for item in rolled_dices:
-                for x in single_locked:
-                    if item == x:
-                        rolled_dices.remove(x)
-            print(rolled_dices)
-            locked_dices.append(rolled_dices)
-            final_dices = single_list(locked_dices)
-            return final_dices
+            if len(single) == 5:
+                return single
+            else:
+                for item in rolled_dices:
+                    for x in locked_dices:
+                        if item == x:
+                            rolled_dices.remove(x)
+                locked_dices.append(rolled_dices)
+                final_dices = single_list(locked_dices)
+                return final_dices
 
 
         # If player has already locked 5 dices the turn ends
-        elif len(final_dices) > 4:
-            return final_dices
+        elif len(locked_dices) > 4:
+            return locked_dices
 
         elif ask_to_continue == "yes":
             # Asks if player wants to reset locked dices before next roll
             reset = reset_or_no()
             if reset == "yes":
-                final_dices = reset_dices(final_dices, locked_int)
-                locked_dices.append(final_dices)
-                all_locked = single_list(locked_dices)
-                leftover_dices = 5 - len(all_locked)
+                single = single_list(locked_dices)
+                reseted_dices = reset_dices(single)
+                locked_dices = []
+                locked_dices.append(reseted_dices)
+                single = single_list(locked_dices)
+                leftover_dices = 5 - len(single)
             else:
                 pass
 
@@ -135,7 +139,9 @@ def roll_the_dices():
             print("\nRoll number ", lap, " starts. \nrolling...")
             continue
         elif ask_to_continue == "no":
-            if not locked and lap == 3:
+            if len(single) == 5:
+                return single
+            elif not locked and lap == 3:
                 forced = forced_lock(rolled_dices)
                 locked = locked_pick(rolled_dices, forced, lap)
                 locked_dices.append(locked)
@@ -156,9 +162,9 @@ def roll_the_dices():
 ## Mechanics used in the one turn of rolling ##
 
 # Resetting locked dices takes the locked list and its lenght as parameter
-def reset_dices(locked, locked_int):
+def reset_dices(locked):
     print("These are your locked dices:", locked)
-    while locked_int > 0:
+    while True:
         to_remove = reset_as_int()
         for item in locked:
             if to_remove == 0:
@@ -301,77 +307,92 @@ def which_score(used):
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "twos":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "threes":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "fours":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "fives":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "sixes":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "pair":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "two pair":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "three of a kind":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "four of a kind":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "small straight":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "large straight":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "full house":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "chance":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "yatzy":
             if which in used:
                 print("Used value. Pick another one or change score to dash by typing 'dash'")
                 continue
-            return which
+            else:
+                return which
         elif which == "dash":
             print("You changed score to dash.")
             return which
@@ -455,7 +476,7 @@ def set_score(picked, which, score_or_dash):
                         return pair
                     else:
                         print("This is not pair. Pick again..")
-                        return 120000
+                        return False
 
             elif which == "two pair":
                 pair_1_value = 0
@@ -503,7 +524,7 @@ def set_score(picked, which, score_or_dash):
                         to_continue = False
                     else:
                         print("This is not two pairs. Pick again..")
-                        return 120000
+                        return False
 
                 # iterate the rest on my_list containing 3 elements
                 to_continue = True
@@ -524,7 +545,7 @@ def set_score(picked, which, score_or_dash):
                         to_continue = False
                     else:
                         print("This is not two pairs. Pick again.")
-                        return 120000
+                        return False
 
                 x = pair_1_value + pair_2_value
                 return x
@@ -551,7 +572,7 @@ def set_score(picked, which, score_or_dash):
 
                 else:
                     print("There are no three of a kind. Select another score or rule out a result.")
-                    return 120000
+                    return False
 
             elif which == "four of a kind":
                 four_of_a_kind = []
@@ -577,7 +598,7 @@ def set_score(picked, which, score_or_dash):
 
                 else:
                     print("This is not four of a kind. Pick again...")
-                    return 120000
+                    return False
 
             elif which == "small straight":
                 sum_of_ss = 15
@@ -585,7 +606,7 @@ def set_score(picked, which, score_or_dash):
                     return sum_of_ss
                 else:
                     print("This is not small straight. Pick again..")
-                    return 120000
+                    return False
 
             elif which == "large straight":
                 sum_of_ls = 20
@@ -593,72 +614,72 @@ def set_score(picked, which, score_or_dash):
                     return sum_of_ls
                 else:
                     print("This is not large straight. Pick again..")
-                    return 120000
+                    return False
 
             elif which == "full house":
                 pair_value = 0
                 three_of_a_kind_value = 0
                 pair = []
                 three_of_a_kind = []
-                to_continue = True
+
                 # sort list
                 my_list.sort()
-                # iterate two elements from the start and end of the sorted list to find the 3 of a kind first
+                # iterate three elements from the start and end of the sorted list to find the 3 of a kind first
                 # remove them from sorted list and move on to search for the remaining pair
-                while to_continue:
-                    if my_list[0] == my_list[1] == my_list[2]:
-                        three_of_a_kind.append(my_list[0])
-                        three_of_a_kind.append(my_list[1])
-                        three_of_a_kind.append(my_list[2])
 
-                        my_list.remove(my_list[0])
-                        my_list.remove(my_list[0])
-                        my_list.remove(my_list[0])
+                if my_list[0] == my_list[1] == my_list[2]:
+                    three_of_a_kind.append(my_list[0])
+                    three_of_a_kind.append(my_list[1])
+                    three_of_a_kind.append(my_list[2])
 
-                        three_of_a_kind_value = sum(three_of_a_kind)
+                    my_list.remove(my_list[0])
+                    my_list.remove(my_list[0])
+                    my_list.remove(my_list[0])
 
-                    elif my_list[4] == my_list[3] == my_list[2]:
-                        three_of_a_kind.append(my_list[4])
-                        three_of_a_kind.append(my_list[3])
-                        three_of_a_kind.append(my_list[2])
+                    three_of_a_kind_value = sum(three_of_a_kind)
 
-                        my_list.remove(my_list[4])
-                        my_list.remove(my_list[3])
-                        my_list.remove(my_list[2])
+                elif my_list[4] == my_list[3] == my_list[2]:
+                    three_of_a_kind.append(my_list[4])
+                    three_of_a_kind.append(my_list[3])
+                    three_of_a_kind.append(my_list[2])
 
-                        three_of_a_kind_value = sum(three_of_a_kind)
-                    else:
-                        print("This is not full house. Pick again..")
-                        return 120000
+                    my_list.remove(my_list[4])
+                    my_list.remove(my_list[3])
+                    my_list.remove(my_list[2])
 
-                    if my_list[0] == my_list[1]:
-                        pair.append(my_list[0])
-                        pair.append(my_list[1])
+                    three_of_a_kind_value = sum(three_of_a_kind)
+                else:
+                    print("This is not full house. Pick again..")
+                    return False
 
-                        my_list.remove(my_list[0])
-                        my_list.remove(my_list[0])
+                if my_list[0] == my_list[1]:
+                    pair.append(my_list[0])
+                    pair.append(my_list[1])
 
-                        pair_value = sum(pair)
+                    my_list.remove(my_list[0])
+                    my_list.remove(my_list[0])
 
-
-                    elif my_list[4] == my_list[3]:
-                        pair.append(my_list[4])
-                        pair.append(my_list[3])
-                        my_list.remove(my_list[4])
-                        my_list.remove(my_list[4])
-                        pair_value = sum(pair)
+                    pair_value = sum(pair)
 
 
-
-                    else:
-                        print("This is not full house. Pick again..")
-                        return 120000
+                elif my_list[4] == my_list[3]:
+                    pair.append(my_list[4])
+                    pair.append(my_list[3])
+                    my_list.remove(my_list[4])
+                    my_list.remove(my_list[4])
+                    pair_value = sum(pair)
 
 
 
-                    x = pair_value + three_of_a_kind_value
+                else:
+                    print("This is not full house. Pick again..")
+                    return False
 
-                    return x
+
+
+                x = pair_value + three_of_a_kind_value
+
+                return x
 
             elif which == "chance":
                 for item in my_list:
@@ -667,13 +688,14 @@ def set_score(picked, which, score_or_dash):
                 return total
 
             elif which == "yatzy":
-                x = picked[0]
-                counter = Counter(picked)
+                x = my_list[0]
+                counter = Counter(my_list)
                 total = 50
                 if counter == {x: 5}:
                     return total
                 else:
                     print("This is not yatzy. Pick again..")
+                    return False
 
         else:
-            return 120000
+            return False
