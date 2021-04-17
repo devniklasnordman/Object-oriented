@@ -173,6 +173,8 @@ def reset_dices(locked):
                 locked.remove(item)
                 print("Locked dices after removal:", locked)
                 break
+            elif len(locked) == 0:
+                return locked
             else:
                 continue
 
@@ -560,6 +562,13 @@ def set_score(picked, which, score_or_dash):
                     three_of_a_kind.append(my_list[0])
                     three_of_a_kind.append(my_list[1])
                     three_of_a_kind.append(my_list[2])
+                    three_of_a_kind_value = sum(three_of_a_kind)
+                    return three_of_a_kind_value
+
+                elif my_list[1] == my_list[2] == my_list[3]:
+                    three_of_a_kind.append(my_list[1])
+                    three_of_a_kind.append(my_list[2])
+                    three_of_a_kind.append(my_list[3])
                     three_of_a_kind_value = sum(three_of_a_kind)
                     return three_of_a_kind_value
 

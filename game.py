@@ -29,6 +29,9 @@ def main():
     p1_used_scores = []
     p2_used_scores = []
 
+    upper_total = 0
+    p2_upper_total = 0
+
     for turns in range(turn_amount):
 
 
@@ -52,14 +55,15 @@ def main():
 
         # If user tries to enter a score that doesn't match the criteria the sum_to_scorecard keeps looping
         # until there is a match or the player picks to dash a score
-        while sum_to_scorecard_type != int:
-            print("Your score did not match the criteria. Change to dash?")
-            score_or_dash = gm.score_or_dash()
-            which_score = gm.which_score(p1_used_scores)
-            if score_or_dash == "dash":
-                break
-            sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
-            sum_to_scorecard_type = type(sum_to_scorecard)
+        if score_or_dash == "score":
+            while sum_to_scorecard_type != int:
+                print("Your score did not match the criteria. Change to dash?")
+                score_or_dash = gm.score_or_dash()
+                which_score = gm.which_score(p1_used_scores)
+                if score_or_dash == "dash":
+                    break
+                sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+                sum_to_scorecard_type = type(sum_to_scorecard)
 
         # After validating the result to scorecard put the selection into the used scores section
         p1_used_scores.append(which_score)
@@ -213,7 +217,7 @@ def main():
             updated_total = old_total + to_add
             if lap == 1 and score_or_dash == "score":
                 if score_lenght == 1:
-                    my_scorecard.set_sum(" " + sum_to_scorecard + " ")
+                    my_scorecard.set_sum(sum_to_scorecard + " ")
                 else:
                     my_scorecard.set_sum("" + sum_to_scorecard + " ")
             else:
@@ -221,9 +225,10 @@ def main():
 
             if score_or_dash == "score":
                 total_into_str = str(updated_total)
-                if score_lenght == 1:
+                total_length = len(total_into_str)
+                if total_length == 1:
                     my_scorecard.set_sum(" " + total_into_str + " ")
-                elif score_lenght == 2:
+                elif total_length == 2:
                     my_scorecard.set_sum(total_into_str + " ")
                 else:
                     my_scorecard.set_sum(total_into_str)
@@ -233,7 +238,6 @@ def main():
             pass
 
         # Bonus check and ignore the dashed scores
-        upper_total = 0
         ones = my_scorecard.get_ones()
         if ones != " - ":
             ones_int = int(my_scorecard.get_ones())
@@ -281,6 +285,7 @@ def main():
         if upper_total > 62:
             my_scorecard.set_bonus("50")
             bonus_int = int(my_scorecard.get_bonus())
+            old_total = int(my_scorecard.get_sum())
             updated_total = old_total + bonus_int
             updated_total_str = str(updated_total)
             my_scorecard.set_sum(updated_total_str)
@@ -309,14 +314,15 @@ def main():
 
             # If user tries to enter a score that doesn't match the criteria the sum_to_scorecard keeps looping
             # until there is a match or the player picks to dash a score
-            while sum_to_scorecard_type != int:
-                print("Your score did not match the criteria. Change to dash?")
-                score_or_dash = gm.score_or_dash()
-                which_score = gm.which_score(p2_used_scores)
-                if score_or_dash == "dash":
-                    break
-                sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
-                sum_to_scorecard_type = type(sum_to_scorecard)
+            if score_or_dash == "score":
+                while sum_to_scorecard_type != int:
+                    print("Your score did not match the criteria. Change to dash?")
+                    score_or_dash = gm.score_or_dash()
+                    which_score = gm.which_score(p2_used_scores)
+                    if score_or_dash == "dash":
+                        break
+                    sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
+                    sum_to_scorecard_type = type(sum_to_scorecard)
 
             # After validating the result to scorecard put the selection into the used scores section
             p2_used_scores.append(which_score)
@@ -478,17 +484,19 @@ def main():
 
                 if score_or_dash == "score":
                     p2_total_into_str = str(p2_updated_total)
-                    if score_lenght == 1:
+                    p2_total_length = len(p2_total_into_str)
+                    if p2_total_length == 1:
                         my_scorecard.set_p2_sum(" " + p2_total_into_str + " ")
-                    else:
+                    elif p2_total_length == 2:
                         my_scorecard.set_p2_sum("" + p2_total_into_str + " ")
+                    else:
+                        my_scorecard.set_p2_sum(p2_total_into_str)
                 else:
                     pass
             else:
                 pass
 
                 # Bonus check and ignore the dashed scores
-                p2_upper_total = 0
                 p2_ones = my_scorecard.get_p2_ones()
                 if p2_ones != " - ":
                     p2_ones_int = int(my_scorecard.get_p2_ones())
@@ -534,6 +542,7 @@ def main():
                 if p2_upper_total > 62:
                     my_scorecard.set_p2_bonus("50")
                     p2_bonus_int = int(my_scorecard.get_p2_bonus())
+                    p2_old_total = int(my_scorecard.get_p2_sum())
                     p2_updated_total = p2_old_total + p2_bonus_int
                     p2_updated_total_str = str(p2_updated_total)
                     my_scorecard.set_p2_sum(p2_updated_total_str)
@@ -545,9 +554,9 @@ def main():
 
     if player_amount > 1:
         if my_scorecard.get_sum() > my_scorecard.get_p2_sum():
-            print("End of game. Player 1 wins with a total of" + my_scorecard.get_sum() + "!")
+            print("End of game. Player 1 wins with a total of " + my_scorecard.get_sum() + "!")
         else:
-            print("End of game. Player 2 wins with a total of" + my_scorecard.get_p2_sum() + "!")
+            print("End of game. Player 2 wins with a total of " + my_scorecard.get_p2_sum() + "!")
 
     else:
         print("End of game. You got " + my_scorecard.get_sum() + " points!")
