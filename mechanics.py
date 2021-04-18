@@ -126,6 +126,8 @@ def roll_the_dices():
                 single = single_list(locked_dices)
                 reseted_dices = reset_dices(single)
                 locked_dices = []
+                if len(reseted_dices) == 0:
+                    pass
                 locked_dices.append(reseted_dices)
                 single = single_list(locked_dices)
                 leftover_dices = 5 - len(single)
@@ -164,17 +166,26 @@ def roll_the_dices():
 # Resetting locked dices takes the locked list and its lenght as parameter
 def reset_dices(locked):
     print("These are your locked dices:", locked)
+    locked_len = len(locked)
     while True:
+        if locked_len == 0:
+            return locked
+        else:
+            pass
+
         to_remove = reset_as_int()
+
+        if to_remove == 0:
+            return locked
+        else:
+            pass
+
         for item in locked:
-            if to_remove == 0:
-                return locked
-            elif item == to_remove:
+            if item == to_remove:
                 locked.remove(item)
+                locked_len -= 1
                 print("Locked dices after removal:", locked)
                 break
-            elif len(locked) == 0:
-                return locked
             else:
                 continue
 
@@ -434,29 +445,73 @@ def set_score(picked, which, score_or_dash):
 
     while list_length > 0:
         if score_or_dash == "score":
+
             if which == "ones":
-                amount = my_list.count(1) * 1
-                return amount
+                ones_bool = False
+                for item in my_list:
+                    if item == 1:
+                        ones_bool = True
+                if ones_bool:
+                    amount = my_list.count(1) * 1
+                    return amount
+                # Return False if there are no ones at all
+                else:
+                    return False
 
             elif which == "twos":
-                amount = my_list.count(2) * 2
-                return amount
+                twos_bool = False
+                for item in my_list:
+                    if item == 2:
+                        twos_bool = True
+                if twos_bool:
+                    amount = my_list.count(2) * 2
+                    return amount
+                else:
+                    return False
 
             elif which == "threes":
-                amount = my_list.count(3) * 3
-                return amount
+                threes_bool = False
+                for item in my_list:
+                    if item == 3:
+                        threes_bool = True
+                if threes_bool:
+                    amount = my_list.count(3) * 3
+                    return amount
+                else:
+                    return False
 
             elif which == "fours":
-                amount = my_list.count(4) * 4
-                return amount
+                fours_bool = False
+                for item in my_list:
+                    if item == 4:
+                        fours_bool = True
+                if fours_bool:
+                    amount = my_list.count(4) * 4
+                    return amount
+                else:
+                    return False
 
             elif which == "fives":
-                amount = my_list.count(5) * 5
-                return amount
+                fives_bool = False
+                for item in my_list:
+                    if item == 5:
+                        fives_bool = True
+                if fives_bool:
+                    amount = my_list.count(5) * 5
+                    return amount
+                else:
+                    return False
 
             elif which == "sixes":
-                amount = my_list.count(6) * 6
-                return amount
+                sixes_bool = False
+                for item in my_list:
+                    if item == 6:
+                        sixes_bool = True
+                if sixes_bool:
+                    amount = my_list.count(6) * 6
+                    return amount
+                else:
+                    return False
 
             elif which == "pair":
                 # sort list in reverse so the highest values in the beginning
@@ -533,7 +588,6 @@ def set_score(picked, which, score_or_dash):
                 while to_continue:
                     if my_list[0] == my_list[1]:
                         pair_2.append(my_list[0] + my_list[1])
-                        print(pair_2)
                         my_list.remove(my_list[0])
                         my_list.remove(my_list[0])
                         pair_2_value = sum(pair_2)

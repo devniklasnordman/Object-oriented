@@ -32,17 +32,18 @@ def main():
     upper_total = 0
     p2_upper_total = 0
 
-    for turns in range(turn_amount):
+    p1_bonus = False
+    p2_bonus = False
 
+    for turns in range(turn_amount):
 
         # Player 1 turn
         print("\nPlayer 1's turn\nYour rolled: \n")
         one_turn = gm.roll_the_dices()
 
-        print("You rolled", one_turn)
+        print("Plyer 1 rolled", one_turn)
         print("Scorecard")
         print(my_scorecard)
-
 
         ## logic to add score to the scorecard ##
 
@@ -65,8 +66,7 @@ def main():
                 sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
                 sum_to_scorecard_type = type(sum_to_scorecard)
 
-        # After validating the result to scorecard put the selection into the used scores section
-        p1_used_scores.append(which_score)
+
         # Convert integer into str so it can be placed in the scorecard
         sum_to_scorecard = str(sum_to_scorecard)
 
@@ -208,6 +208,84 @@ def main():
             print("Type in 'score' or 'dash'")
             continue
 
+        # Bonus check and ignore the dashed and already added scores
+        ones = my_scorecard.get_ones()
+        check_ones = "ones"
+        if check_ones not in p1_used_scores:
+            if ones != " - ":
+                ones_int = int(my_scorecard.get_ones())
+                upper_total += ones_int
+            else:
+                pass
+        else:
+            pass
+
+        twos = my_scorecard.get_twos()
+        check_twos = "twos"
+        if check_twos not in p1_used_scores:
+            if twos != " - ":
+                twos_int = int(my_scorecard.get_twos())
+                upper_total += twos_int
+            else:
+                pass
+        else:
+            pass
+
+        threes = my_scorecard.get_threes()
+        check_threes = "threes"
+        if check_threes not in p1_used_scores:
+            if threes != " - ":
+                threes_int = int(my_scorecard.get_threes())
+                upper_total += threes_int
+            else:
+                pass
+        else:
+            pass
+
+        fours = my_scorecard.get_fours()
+        check_fours = "fours"
+        if check_fours not in p1_used_scores:
+            if fours != " - ":
+                fours_int = int(my_scorecard.get_fours())
+                upper_total += fours_int
+            else:
+                pass
+        else:
+            pass
+
+        fives = my_scorecard.get_fives()
+        check_fives = "fives"
+        if check_fives not in p1_used_scores:
+            if fives != " - ":
+                fives_int = int(my_scorecard.get_fives())
+                upper_total += fives_int
+            else:
+                pass
+        else:
+            pass
+
+        sixes = my_scorecard.get_sixes()
+        check_sixes = "sixes"
+        if check_sixes not in p1_used_scores:
+            if sixes != " - ":
+                sixes_int = int(my_scorecard.sixes)
+                upper_total += sixes_int
+            else:
+                pass
+        else:
+            pass
+
+        print(p1_used_scores)
+        print(upper_total)
+        if upper_total > 62 and not p1_bonus:
+            my_scorecard.set_bonus("50 ")
+            bonus_int = int(my_scorecard.get_bonus())
+            old_total = int(my_scorecard.get_sum())
+            updated_total = old_total + bonus_int
+            updated_total_str = str(updated_total)
+            my_scorecard.set_sum(updated_total_str)
+            upper_total = updated_total
+            p1_bonus = True
 
         # Update total points
 
@@ -215,6 +293,7 @@ def main():
             to_add = int(sum_to_scorecard)
             old_total = int(my_scorecard.get_sum())
             updated_total = old_total + to_add
+
             if lap == 1 and score_or_dash == "score":
                 if score_lenght == 1:
                     my_scorecard.set_sum(sum_to_scorecard + " ")
@@ -237,69 +316,18 @@ def main():
         else:
             pass
 
-        # Bonus check and ignore the dashed scores
-        ones = my_scorecard.get_ones()
-        if ones != " - ":
-            ones_int = int(my_scorecard.get_ones())
-            upper_total += ones_int
-        else:
-            pass
-
-        twos = my_scorecard.get_twos()
-        if twos != " - ":
-            twos_int = int(my_scorecard.get_twos())
-            upper_total += twos_int
-        else:
-            pass
-
-        threes = my_scorecard.get_threes()
-        if threes != " - ":
-            threes_int = int(my_scorecard.get_threes())
-            upper_total += threes_int
-        else:
-            pass
-
-        fours = my_scorecard.get_fours()
-        if fours != " - ":
-            fours_int = int(my_scorecard.get_fours())
-            upper_total += fours_int
-        else:
-            pass
-
-        fives = my_scorecard.get_fives()
-        if fives != " - ":
-            fives_int = int(my_scorecard.get_fives())
-            upper_total += fives_int
-        else:
-            pass
-
-        sixes = my_scorecard.get_sixes()
-        if sixes != " - ":
-            sixes_int = int(my_scorecard.sixes)
-            upper_total += sixes_int
-        else:
-            pass
-
-
-
-        if upper_total > 62:
-            my_scorecard.set_bonus("50")
-            bonus_int = int(my_scorecard.get_bonus())
-            old_total = int(my_scorecard.get_sum())
-            updated_total = old_total + bonus_int
-            updated_total_str = str(updated_total)
-            my_scorecard.set_sum(updated_total_str)
-
+        # After whole rolling turn put selected score into the used scores section
+        print(which_score)
+        p1_used_scores.append(which_score)
+        print(p1_used_scores)
         print(my_scorecard)
-
 
         # Player 2 turn
         if player_amount > 1:
             print("\nPlayer 2's turn\nYour rolled: \n")
             one_turn = gm.roll_the_dices()
-            print(one_turn)
 
-            print("You rolled", one_turn)
+            print("Player 2 rolled", one_turn)
             print("Scorecard")
             print(my_scorecard)
 
@@ -324,8 +352,7 @@ def main():
                     sum_to_scorecard = gm.set_score(one_turn, which_score, score_or_dash)
                     sum_to_scorecard_type = type(sum_to_scorecard)
 
-            # After validating the result to scorecard put the selection into the used scores section
-            p2_used_scores.append(which_score)
+
             # Convert integer into str so it can be placed in the scorecard
             sum_to_scorecard = str(sum_to_scorecard)
 
@@ -468,7 +495,87 @@ def main():
                 print("Type in 'score' or 'dash'")
                 continue
 
+            # Bonus check and ignore the dashed and already added scores
+            p2_ones = my_scorecard.get_p2_ones()
+            check_ones = "ones"
+            if check_ones not in p2_used_scores:
+                if p2_ones != " - ":
+                    p2_ones_int = int(my_scorecard.get_p2_ones())
+                    p2_upper_total += p2_ones_int
+                else:
+                    pass
+            else:
+                pass
+
+            p2_twos = my_scorecard.get_p2_twos()
+            check_twos = "twos"
+            if check_twos not in p2_used_scores:
+                if p2_twos != " - ":
+                    p2_twos_int = int(my_scorecard.get_p2_twos())
+                    p2_upper_total += p2_twos_int
+                else:
+                    pass
+            else:
+                pass
+
+            p2_threes = my_scorecard.get_threes()
+            check_threes = "threes"
+            if check_threes not in p2_used_scores:
+                if p2_threes != " - ":
+                    p2_threes_int = int(my_scorecard.get_p2_threes())
+                    p2_upper_total += p2_threes_int
+                else:
+                    pass
+            else:
+                pass
+
+            p2_fours = my_scorecard.get_p2_fours()
+            check_fours = "fours"
+            if check_fours not in p2_used_scores:
+                if p2_fours != " - ":
+                    p2_fours_int = int(my_scorecard.get_p2_fours())
+                    p2_upper_total += p2_fours_int
+                else:
+                    pass
+            else:
+                pass
+
+            p2_fives = my_scorecard.get_p2_fives()
+            check_fives = "fives"
+            if check_fives not in p2_used_scores:
+                if p2_fives != " - ":
+                    p2_fives_int = int(my_scorecard.get_p2_fives())
+                    p2_upper_total += p2_fives_int
+                else:
+                    pass
+            else:
+                pass
+
+            p2_sixes = my_scorecard.get_p2_sixes()
+            check_sixes = "sixes"
+            if check_sixes not in p2_used_scores:
+                if p2_sixes != " - ":
+                    p2_sixes_int = int(my_scorecard.get_p2_sixes())
+                    p2_upper_total += p2_sixes_int
+                else:
+                    pass
+            else:
+                pass
+
+            if p2_upper_total > 62 and not p2_bonus:
+                my_scorecard.set_p2_bonus("50 ")
+                p2_bonus_int = int(my_scorecard.get_p2_bonus())
+                p2_old_total = int(my_scorecard.get_p2_sum())
+                p2_updated_total = p2_old_total + p2_bonus_int
+                p2_updated_total_str = str(p2_updated_total)
+                my_scorecard.set_p2_sum(p2_updated_total_str)
+                p2_upper_total = p2_updated_total
+                p2_bonus = True
+
+
+
             # Update total points
+
             if score_or_dash == "score":
                 p2_to_add = int(sum_to_scorecard)
                 p2_old_total = int(my_scorecard.get_p2_sum())
@@ -496,61 +603,10 @@ def main():
             else:
                 pass
 
-                # Bonus check and ignore the dashed scores
-                p2_ones = my_scorecard.get_p2_ones()
-                if p2_ones != " - ":
-                    p2_ones_int = int(my_scorecard.get_p2_ones())
-                    p2_upper_total += p2_ones_int
-                else:
-                    pass
-
-                p2_twos = my_scorecard.get_p2_twos()
-                if p2_twos != " - ":
-                    p2_twos_int = int(my_scorecard.get_p2_twos())
-                    p2_upper_total += p2_twos_int
-                else:
-                    pass
-
-                p2_threes = my_scorecard.get_threes()
-                if p2_threes != " - ":
-                    p2_threes_int = int(my_scorecard.get_p2_threes())
-                    p2_upper_total += p2_threes_int
-                else:
-                    pass
-
-                p2_fours = my_scorecard.get_p2_fours()
-                if p2_fours != " - ":
-                    p2_fours_int = int(my_scorecard.get_p2_fours())
-                    p2_upper_total += p2_fours_int
-                else:
-                    pass
-
-                p2_fives = my_scorecard.get_p2_fives()
-                if p2_fives != " - ":
-                    p2_fives_int = int(my_scorecard.get_p2_fives())
-                    p2_upper_total += p2_fives_int
-                else:
-                    pass
-
-                p2_sixes = my_scorecard.get_p2_sixes()
-                if p2_sixes != " - ":
-                    p2_sixes_int = int(my_scorecard.get_p2_sixes())
-                    p2_upper_total += p2_sixes_int
-                else:
-                    pass
-
-                if p2_upper_total > 62:
-                    my_scorecard.set_p2_bonus("50")
-                    p2_bonus_int = int(my_scorecard.get_p2_bonus())
-                    p2_old_total = int(my_scorecard.get_p2_sum())
-                    p2_updated_total = p2_old_total + p2_bonus_int
-                    p2_updated_total_str = str(p2_updated_total)
-                    my_scorecard.set_p2_sum(p2_updated_total_str)
-
+            # Put selected score into the used scores section
+            p2_used_scores.append(which_score)
             print(my_scorecard)
         lap += 1
-
-
 
     if player_amount > 1:
         if my_scorecard.get_sum() > my_scorecard.get_p2_sum():
