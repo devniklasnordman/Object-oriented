@@ -10,13 +10,25 @@ import mechanics as gm
 def main():
     print("Lets play a game of Yatzy!\n")
 
+
+    while True:
+        show_rules = input("Show rules? (yes/no)")
+        if show_rules == "yes":
+            return gm.rules()
+        elif show_rules == "no":
+            print("Ok then, lets go!")
+            break
+        else:
+            print("You must choose 'yes' or 'no'.")
+            continue
+
     # Player & turn amount defined
     player_amount = gm.player_amount()
     turn_amount = 15
 
     # Creating a scorecard object
     my_scorecard = scorecard.Scorecard()
-    print(my_scorecard)
+
     # Define scorecard by and delete excess players
     if player_amount == 1:
         my_scorecard.set_player_2("   |")
@@ -275,8 +287,7 @@ def main():
         else:
             pass
 
-        print(p1_used_scores)
-        print(upper_total)
+
         if upper_total > 62 and not p1_bonus:
             my_scorecard.set_bonus("50 ")
             bonus_int = int(my_scorecard.get_bonus())
@@ -317,9 +328,7 @@ def main():
             pass
 
         # After whole rolling turn put selected score into the used scores section
-        print(which_score)
         p1_used_scores.append(which_score)
-        print(p1_used_scores)
         print(my_scorecard)
 
         # Player 2 turn

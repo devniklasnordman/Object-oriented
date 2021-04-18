@@ -8,11 +8,33 @@ from collections import Counter
 import scorecard
 
 
+# Rules
+
+def rules():
+    print("Player with the highest points wins!\n\nIn each round, a player gets three rolls of the dice,"
+          " although they can choose to end their turn after one or two rolls."
+          "\nAfter the first roll the player can save any dice they want and re-roll the other dice."
+          "\nThis procedure is repeated after the second roll. The player has complete choice as to which dice to roll."
+          "\nIt is possible to re-roll both dice that were or were not rolled before. \n"
+          "\nThe Yatzy scorecard contains 15 different category boxes divided into upper and lower sections."
+          "\nIn each round, after the third roll, the player must choose one of these categories."
+          "\nThe score entered in the box depends on how well the five dice match the scoring rule for the category.\n"
+          "\nAs an example, one of the categories is called Three of a Kind."
+          "\nThe scoring rule for this category means that a player only scores if at least three of the five dice"
+          "\nare the same value. If your score does not match any criteria on the available scorecard slots"
+          " \nthen you have to dash one of your slots. \n"
+          "\nThe game is completed after 15 rounds by each player, with each of the 15 boxes filled."
+          "\nThe total score is calculated by summing all fifteen boxes, together with any bonuses. \n"
+          "\nEarn a 50 points Bonus from the upper section by having over 62 points from all of the upper boxes summed "
+          "\n(you get it by rolling at least 3 items in every upper box) "
+          "\nYatzy means 5 of a kind and it is worth 50 points. "
+          "\nThe Yatzy scorecard contains 15 scoring boxes divided into upper and lower sections.")
+
 # Amount of players
 
 def player_amount():
     while True:
-        amount = input("Solo or duo? \n(type player amount 1 or 2):\n")
+        amount = input("\nSolo or duo? \n(type player amount 1 or 2):\n")
         if amount == "1" or "2":
             try:
                 amount = int(amount)
@@ -101,15 +123,14 @@ def roll_the_dices():
 
         # if player locks insufficient amount of dices and has rolls left
         # the dices on board will be automatically picked and the turn ends
-        lenght = len(locked_dices)
-        if ask_to_continue == "no" and lenght < 5:
+        length = len(single)
+        if ask_to_continue == "no" and length < 5:
             if len(single) == 5:
                 return single
             else:
-                for item in rolled_dices:
-                    for x in locked_dices:
-                        if item == x:
-                            rolled_dices.remove(x)
+                for element in single:
+                    if element in rolled_dices:
+                        rolled_dices.remove(element)
                 locked_dices.append(rolled_dices)
                 final_dices = single_list(locked_dices)
                 return final_dices
@@ -163,7 +184,7 @@ def roll_the_dices():
 
 ## Mechanics used in the one turn of rolling ##
 
-# Resetting locked dices takes the locked list and its lenght as parameter
+# Resetting locked dices takes the locked list and its length as parameter
 def reset_dices(locked):
     print("These are your locked dices:", locked)
     locked_len = len(locked)
@@ -301,7 +322,7 @@ def continue_or_no():
 # Ensure that the answer is exactly 'score' or 'dash'
 def score_or_dash():
     while True:
-        answer = input("\nType 'score' or dash over one result from card"
+        answer = input("\nType 'score' or dash over one result from card "
                        "by typing 'dash' ")
         if answer == "score":
             return answer
