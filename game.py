@@ -14,7 +14,8 @@ def main():
     while True:
         show_rules = input("Show rules? (yes/no)")
         if show_rules == "yes":
-            return gm.rules()
+            gm.rules()
+            break
         elif show_rules == "no":
             print("Ok then, lets go!")
             break
