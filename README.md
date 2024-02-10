@@ -1,7 +1,6 @@
 # Object-oriented
 School course Object oriented programming with python.
 The project was a yatzy game running in terminal.
-The code is kinda cramped into a single file so it could be more organized into modules, but it works as intended!
 
 A fun project that lasted a couple of weeks and I did manage to capture the spirit of Yatzy into this game.
 ![image](https://user-images.githubusercontent.com/71698722/162714872-39e11edd-405d-4a38-bebf-167ecaddb7dd.png)
